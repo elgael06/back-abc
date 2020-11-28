@@ -62,14 +62,28 @@ export class UsersService {
         return {message:'Error el usuario no existe...',status:false}
     }
     async deleteUser(idUser:string):Promise<messageInterface>{
-        const existUser = await this.userModel.findOne({_id:idUser,status:true}).exec();
-        
+        const existUser = await this.userModel.findOne({_id:idUser,status:true}).exec();        
         if(existUser!==null){
             try{
-                await this.userModel.updateOne({_id:idUser,status:true},{status:false});
+                const jsonUser = existUser.toJSON();                
+                await this.userModel.updateOne({_id:idUser,status:true},{...jsonUser,status:false});
                 return {message:'Usuario eliminado!',status:true}
             }catch(error){
                 return {message:'Error al eliminar Usuario! ' + error,status:false}
+            }
+        }
+        return {message:'Error el usuario no existe...',status:false}
+    }
+    async restoreUserId(idUser:string):Promise<messageInterface>{
+        const existUser = await this.userModel.findOne({_id:idUser,status:false}).exec();
+        
+        if(existUser!==null){            
+            try{
+                const jsonUser = existUser.toJSON();                
+                await this.userModel.updateOne({_id:idUser,status:false},{...jsonUser,status:true});
+                return {message:'Usuario restaurado!',status:true}
+            }catch(error){
+                return {message:'Error al recuperar Usuario! ' + error,status:false}
             }
         }
         return {message:'Error el usuario no existe...',status:false}

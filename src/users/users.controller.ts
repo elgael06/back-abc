@@ -39,4 +39,8 @@ export class UsersController {
     ):Promise<messageInterface>{
         return this.userModule.deleteUser(idUser);
     }
+    @Post('/restore/:id')
+    async restoreUserId( @Param('id') idUser:string){
+        return this.userModule.restoreUserId(idUser);
+    }
 }
